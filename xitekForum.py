@@ -15,14 +15,6 @@ class PostThread:
 	readNum=0
 	replyNum=0
 
-#帖子信息结构	
-class PostInfo:
-	threadId=0
-	postId=0
-	content=""
-	uid=""
-	uname=""
-	postDate=""
 
 class PageInfo:
 	totalPage=0
@@ -115,28 +107,29 @@ class XitekForumParser:
 
 		return (retList,page)
 
-#论坛编号
-forumId=103
-#遍历一个forum
-pageNum =1
-forumParser =  XitekForumParser()
-pageData= forumParser.fetchPage(forumId,pageNum)
-ret = forumParser.parsePage(pageData)
-threadList = ret[0]
-pageInfo = ret[1]
-
-print("****第%s页****"%page)
-for p in threadList:
-	print (p.threadId+","+p.title+","+p.uid+","+p.uname+","+p.replyNum+"," + p.readNum)
-
-for num in range(2,5):
-	pageData= forumParser.fetchPage(forumId,num)
+if __name__=='__main__':
+	#论坛编号
+	forumId=103
+	#遍历一个forum
+	pageNum =1
+	forumParser =  XitekForumParser()
+	pageData= forumParser.fetchPage(forumId,pageNum)
 	ret = forumParser.parsePage(pageData)
 	threadList = ret[0]
 	pageInfo = ret[1]
 
-	print("****第%s页****"%num)
+	print("****第%s页****"%pageNum)
 	for p in threadList:
 		print (p.threadId+","+p.title+","+p.uid+","+p.uname+","+p.replyNum+"," + p.readNum)
 
-print("#######")
+	for num in range(2,5):
+		pageData= forumParser.fetchPage(forumId,num)
+		ret = forumParser.parsePage(pageData)
+		threadList = ret[0]
+		pageInfo = ret[1]
+
+		print("****第%s页****"%num)
+		for p in threadList:
+			print (p.threadId+","+p.title+","+p.uid+","+p.uname+","+p.replyNum+"," + p.readNum)
+
+	print("#######")
