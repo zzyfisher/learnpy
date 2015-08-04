@@ -21,13 +21,15 @@ class MongoStore:
 		
 	#保存到db-thread（主题）
 	def saveThread(self,thread):
-		self.db.threads.insert(thread)
+		j= json.dumps(thread, default=lambda thread: thread.__dict__)
+		self.db.threads.insert(json.loads(j))
 	def saveForum(self,forum):
 		j= json.dumps(forum, default=lambda forum: forum.__dict__)
 		print(j)
 		self.db.forums.insert(json.loads(j))
 	def savePost(self,post):
-		self.db.posts.insert(post)
+		j= json.dumps(post, default=lambda post: post.__dict__)
+		self.db.posts.insert(json.loads(j))
 		
 		
 if __name__=='__main__':	
@@ -37,3 +39,9 @@ if __name__=='__main__':
 	forum.forumId=100
 	forum.forumName="测试论坛"
 	ms.saveForum(forum)
+	post = PostInfo()
+	post.threadId=1
+	post.content="hello"
+	post.postId="2"
+	ms.savePost(post)
+	

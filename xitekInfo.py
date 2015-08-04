@@ -23,7 +23,7 @@ class ThreadInfo:
 
 #帖子信息结构	
 class PostInfo:
-	def __init__():
+	def __init__(self):
 		self.threadId=0
 		self.postId=0
 		self.content=""
