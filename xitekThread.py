@@ -5,15 +5,7 @@
 from bs4 import BeautifulSoup
 from urllib import request
 import re
-
-#帖子信息结构	
-class PostInfo:
-	threadId=0
-	postId=0
-	content=""
-	uid=""
-	uname=""
-	postDate=""
+from xitekInfo import ThreadInfo,PostInfo,PageInfo,ForumInfo
 
 class XitekThreadParser:
 	url="http://forum.xitek.com/thread-{threadId}-{pageNum}-1-1.html"

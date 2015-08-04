@@ -6,21 +6,7 @@ from bs4 import BeautifulSoup
 from urllib import request
 import re
 
-#定义一个保存帖子线索(主题)的结构
-class PostThread:
-	threadId=0
-	title=""
-	uid=""
-	uname=""
-	readNum=0
-	replyNum=0
-
-
-class PageInfo:
-	totalPage=0
-	pageNo=0
-
-
+from xitekInfo import ThreadInfo,PostInfo,PageInfo,ForumInfo
 #处理论坛的帖子列表
 class XitekForumParser:
 	#论坛地址
@@ -79,7 +65,7 @@ class XitekForumParser:
 			v=re.findall(pattern,msg)
 			#print(v)
 
-			r=PostThread();
+			r=ThreadInfo();
 			r.threadId=v[0][0].strip();
 			r.title = v[0][1].strip();
 			r.uid=v[0][2].strip();
