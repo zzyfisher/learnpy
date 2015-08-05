@@ -10,6 +10,7 @@ class ForumInfo:
 		self.forumId=b""
 		self.forumName=""
 		self.forumOther=""
+		self._id=0
 		
 #定义一个保存帖子线索(主题)的结构
 class ThreadInfo:
@@ -20,6 +21,7 @@ class ThreadInfo:
 		self.uname=""
 		self.readNum=0
 		self.replyNum=0
+		self._id=0
 
 #帖子信息结构	
 class PostInfo:
@@ -30,6 +32,7 @@ class PostInfo:
 		self.uid=""
 		self.uname=""
 		self.postDate=""
+		
 	
 #定义一个分页信息的结构		
 class PageInfo:

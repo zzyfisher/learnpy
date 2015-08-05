@@ -9,13 +9,15 @@ import re
 from xitekInfo import ThreadInfo,PostInfo,PageInfo,ForumInfo
 #处理论坛的帖子列表
 class XitekForumParser:
-	#论坛地址
-	url="http://forum.xitek.com/forum-[forum]-[page].html"
-	
+	def __init__(self,forumId):
+		self.forumId=forumId
+		self.url="http://forum.xitek.com/forum-[forum]-[page].html"
+		
 	#抓取第p页
-	def fetchPage(self,forumId,pageNum):
+	def fetchPage(self,pageNum):
 		purl = self.url.replace("[page]",str(pageNum))
-		purl = purl.replace("[forum]",str(forumId))
+		purl = purl.replace("[forum]",str(self.forumId))
+		print("Fetching(%s)..."%purl)
 		with request.urlopen(purl) as f:
 			data = f.read()
 			#print('Status:', f.status, f.reason)
@@ -58,7 +60,7 @@ class XitekForumParser:
 		for t in tablelist:
 			#使用正则获取帖子列表中的值
 			#thread-id,title,uid,uname,回帖，阅读
-			pattern = re.compile(r'<th class=.*?<a .*?thread-(.*?).html.*?>(.*?)</a>.*?</th>'\
+			pattern = re.compile(r'<th class=.*?<a .*?thread-(.*?)-.*?.html.*?>(.*?)</a>.*?</th>'\
 				'.*?<a .*?space-uid-(.*?).html.*?>(.*?)</a>.*?<td .*?>(.*?)</td>.*?<td .*?>(.*?)</td>',re.S)
 			msg=t.prettify()
 			#print(msg)
@@ -66,12 +68,14 @@ class XitekForumParser:
 			#print(v)
 
 			r=ThreadInfo();
-			r.threadId=v[0][0].strip();
-			r.title = v[0][1].strip();
-			r.uid=v[0][2].strip();
-			r.uname=v[0][3].strip();
-			r.replyNum=v[0][4].strip();
-			r.readNum=v[0][5].strip();
+			r.forumId=self.forumId
+			r.threadId=v[0][0].strip()
+			r._id=r.threadId
+			r.title = v[0][1].strip()
+			r.uid=v[0][2].strip()
+			r.uname=v[0][3].strip()
+			r.replyNum=v[0][4].strip()
+			r.readNum=v[0][5].strip()
 
 			retList.append(r)			
 
@@ -98,8 +102,8 @@ if __name__=='__main__':
 	forumId=103
 	#遍历一个forum
 	pageNum =1
-	forumParser =  XitekForumParser()
-	pageData= forumParser.fetchPage(forumId,pageNum)
+	forumParser =  XitekForumParser(forumId)
+	pageData= forumParser.fetchPage(pageNum)
 	ret = forumParser.parsePage(pageData)
 	threadList = ret[0]
 	pageInfo = ret[1]
@@ -109,7 +113,7 @@ if __name__=='__main__':
 		print (p.threadId+","+p.title+","+p.uid+","+p.uname+","+p.replyNum+"," + p.readNum)
 
 	for num in range(2,5):
-		pageData= forumParser.fetchPage(forumId,num)
+		pageData= forumParser.fetchPage(num)
 		ret = forumParser.parsePage(pageData)
 		threadList = ret[0]
 		pageInfo = ret[1]

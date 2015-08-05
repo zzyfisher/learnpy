@@ -8,13 +8,15 @@ import re
 from xitekInfo import ThreadInfo,PostInfo,PageInfo,ForumInfo
 
 class XitekThreadParser:
-	url="http://forum.xitek.com/thread-{threadId}-{pageNum}-1-1.html"
+	def __init__(self,threadId):
+		self.threadId=threadId
+		self.url="http://forum.xitek.com/thread-{threadId}-{pageNum}-1-1.html"
 	
 	#抓取页面数据
-	def fetchPage(self,threadId,pageNum):
-		purl = self.url.replace("{threadId}",threadId)
+	def fetchPage(self,pageNum):
+		purl = self.url.replace("{threadId}",self.threadId)
 		purl = purl.replace("{pageNum}",str(pageNum))
-		print (purl)	
+		print ("Fetching (%s)..." % purl)	
 		with request.urlopen(purl) as f:
 			data = f.read()
 			#print('Status:', f.status, f.reason)
@@ -24,7 +26,7 @@ class XitekThreadParser:
 		return body
 
 	#解析
-	def parsePage(self,pageData):
+	def parsePage(self,pageData,pageNum):
 		soup = BeautifulSoup(pageData,"html.parser")
 		#print (soup.prettify())
 
@@ -54,7 +56,7 @@ class XitekThreadParser:
 			</td>
 			'''
 			postInfo = PostInfo()
-			postInfo.threadId=threadId
+			postInfo.threadId=self.threadId
 
 			pattern = re.compile(r"<b>(.*?)</b>.*?注册: (.*?)<br/>",re.S)
 			msg=u.prettify()
@@ -104,9 +106,9 @@ if __name__=='__main__':
 	threadId="1483437"
 	#遍历一个forum
 	pageNum =1
-	threadParser =  XitekThreadParser()
-	pageData= threadParser.fetchPage(threadId,pageNum)
-	ret = threadParser.parsePage(pageData)
+	threadParser =  XitekThreadParser(threadId)
+	pageData= threadParser.fetchPage(pageNum)
+	ret = threadParser.parsePage(pageData,num)
 	postList=ret[0]
 	maxPage=ret[1]
 
@@ -117,7 +119,7 @@ if __name__=='__main__':
 
 	for num in range(2,maxPage+1):
 		pageData= threadParser.fetchPage(threadId,num)
-		ret = threadParser.parsePage(pageData)
+		ret = threadParser.parsePage(pageData,num,threadId)
 		postList=ret[0]
 		print("====Page:%s/%s"%(num,maxPage))
 		for p in postList:
