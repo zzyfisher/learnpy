@@ -67,13 +67,23 @@ class XitekThreadParser:
 			#用正则处理内容信息
 			#内容
 			m = t.find("td",id=re.compile('^postmessage_'))	
+			msg=m.prettify()
 			#print("message:" + m.prettify())
 			
-			pattern = re.compile(r"<td .*?>(.*?)</td>",re.S)
-			msg=m.prettify()
+			pattern = re.compile(r"<td .*?postmessage_(.*?)\".*?>(.*?)</td>",re.S)			
 			v=re.findall(pattern,msg)
+			
+			postInfo.postId=v[0][0].strip()
+			postInfo.content=v[0][1].strip()
+			postInfo._id=postInfo.postId
+			
+			#处理时间,table的第2行，第1列
+			#注意这里用tr[2]的原因是table中还嵌套了一个table，里边也有tr
+			td = t.find_all("tr")[2].find("td")
+			#print("====")
+			#print(td.prettify())
 
-			postInfo.content=v[0].strip()
+			postInfo.postDate=td.get_text().strip()
 			retList.append(postInfo)
 
 		#处理分页(页面中有2个alln class，都是分页区域)
@@ -108,20 +118,20 @@ if __name__=='__main__':
 	pageNum =1
 	threadParser =  XitekThreadParser(threadId)
 	pageData= threadParser.fetchPage(pageNum)
-	ret = threadParser.parsePage(pageData,num)
+	ret = threadParser.parsePage(pageData,pageNum)
 	postList=ret[0]
 	maxPage=ret[1]
 
 	print("====Page:%s/%s"%(pageNum,maxPage))
 	for p in postList:
-			print (p.threadId+","+p.uname+",\n")
+			print (p.threadId+","+p.uname+","+p.postDate+","+p._id)
 
-
+	pass
 	for num in range(2,maxPage+1):
-		pageData= threadParser.fetchPage(threadId,num)
-		ret = threadParser.parsePage(pageData,num,threadId)
+		pageData= threadParser.fetchPage(num)
+		ret = threadParser.parsePage(pageData,num)
 		postList=ret[0]
 		print("====Page:%s/%s"%(num,maxPage))
 		for p in postList:
-			print (p.threadId+","+p.uname+",\n")
+			print (p.threadId+","+p.uname+","+p.postDate+","+p._id)
 

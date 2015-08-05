@@ -32,7 +32,8 @@ class PostInfo:
 		self.uid=""
 		self.uname=""
 		self.postDate=""
-		
+		self._id=0
+
 	
 #定义一个分页信息的结构		
 class PageInfo:
